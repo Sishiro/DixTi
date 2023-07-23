@@ -4,18 +4,22 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSystem : MonoBehaviour
+public enum GameState
 {
-    public enum State
-    {
-        Theme,
-        Phrase,
-        Guess
-    }
+    EnterTheme,
+    ShowTheme,
+    EnterPhrase,
+    ShowPhrases,
+    Guess
+}
 
-    public State state;
+public class GameSystem : Singleton<GameSystem>
+{
+    public GameState state;
 
     public PlayerData[] playerDatas = new PlayerData[8];
+
+    public GameSetting gameSetting;
 
     [Header("Room")]
     public GameObject playersPanel;
@@ -25,10 +29,12 @@ public class GameSystem : MonoBehaviour
     public Button okButtonTheme;
 
     [Header("Phrase")]
-    public TMP_InputField inputField;
-    public Button okButtonPhrase;
+    public TMP_Text phraseTimeText;
+    public TMP_InputField phraseInputField;
+    public Button phraseOkButton;
 
     [Header("Guess")]
+    public TMP_Text guessTimeText;
     public GameObject guessPanel;
-    public Button okButtonGuess;
+    public Button guessOkButton;
 }

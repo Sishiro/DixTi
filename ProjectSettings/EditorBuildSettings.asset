@@ -9,4 +9,5 @@ EditorBuildSettings:
     path: Assets/DixTi/Scenes/MainMenuScene.unity
     guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 969b8837b0c18844083e3ff0ee673a93, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 7744b2a8ee048c247b00c0fc9227ab0c, type: 2}

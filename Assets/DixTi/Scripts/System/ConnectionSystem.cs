@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -8,37 +9,15 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 
-public class ConectionSystem : MonoBehaviour
+public class ConnectionSystem : Singleton<ConnectionSystem>
 {
-    [SerializeField] private TMP_InputField inputField;
-    private string joinCode = "";
-    [SerializeField] private TextMeshProUGUI codeText;
-
-    [SerializeField] private MenuSystem menuSystem;
-
-    public PlayerData playerData;
-    [SerializeField] private TMP_InputField playerNameIF;
-
-    public void EnterGame()
-    {
-        if (playerNameIF.text.Length > 0)
-        {
-            playerData.name = playerNameIF.text;
-            menuSystem.ChangeScene(1);
-        }
-        else
-        {
-            // Show error UI
-        }
-    }
-
-    public async void CreateRelay()
+    public async Task<bool> CreateRelay()
     {
         try
         {
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(7);
 
-            joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
 
@@ -46,17 +25,22 @@ public class ConectionSystem : MonoBehaviour
 
             NetworkManager.Singleton.StartHost();
 
-            codeText.text += joinCode;
+            RoomManager.Instance.startGameButton.interactable = true;
+
+            RoomManager.Instance.joinCodeTextUI.text = "Código: " + joinCode;
+
+            return true;
         }
         catch (RelayServiceException ex)
         {
             Debug.LogException(ex);
         }
+        return false;
     }
 
-    public async void JoinRelay()
+    public async Task<bool> JoinRelay()
     {
-        joinCode = inputField.text;
+        string joinCode = JoinManager.Instance.joinCodeInputField.text;
         Debug.Log(joinCode);
         if (joinCode.Length > 0)
         {
@@ -70,7 +54,7 @@ public class ConectionSystem : MonoBehaviour
 
                 NetworkManager.Singleton.StartClient();
 
-                menuSystem.ChangeScene(2);
+                return true;
             }
             catch (RelayServiceException ex)
             {
@@ -81,6 +65,7 @@ public class ConectionSystem : MonoBehaviour
         {
             // Show error UI
         }
+        return false;
     }
 
     public void Disconnect()

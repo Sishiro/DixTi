@@ -1,23 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
 public class InitializeServices : MonoBehaviour
 {
-    public async void Init()
+    public async Task Init()
     {
         try
         {
             if (UnityServices.State == ServicesInitializationState.Uninitialized)
             {
                 await UnityServices.InitializeAsync();
+                SetupEvents();
             }
             if (!AuthenticationService.Instance.IsSignedIn)
             {
-                SetupEvents();
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
             }
         }
